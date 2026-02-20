@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" width="120" height="32">
+  <rect width="120" height="32" rx="6" fill="#0f172a"/>
+  <circle cx="18" cy="16" r="8" fill="#22c55e"/>
+  <text x="34" y="20" fill="#fff" font-family="Arial,sans-serif" font-size="12" font-weight="700">Mixx by Yas</text>
+</svg>
