@@ -3,9 +3,9 @@
   "version": "1.2.0",
   "private": true,
   "scripts": {
-  "dev": "set NODE_OPTIONS=--openssl-legacy-provider && next dev",
-  "build": "set NODE_OPTIONS=--openssl-legacy-provider && next build",
-  "start": "set NODE_OPTIONS=--openssl-legacy-provider && next start"
+  "dev": "set NODE_OPTIONS=--openssl-legacy-provider && next dev -p 6000",
+  "build": "set NODE_OPTIONS=--openssl-legacy-provider && next build -p 6000",
+  "start": "set NODE_OPTIONS=--openssl-legacy-provider && next start -p 6000"
 },
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.15.4",
