@@ -1,0 +1,23 @@
+# See https://docs.docker.com/engine/reference/builder/#dockerignore-file
+
+# Git
+.git
+.gitignore
+
+# Docker
+.dockerignore
+Dockerfile
+dockerfile
+
+# Node
+node_modules
+npm-debug.log*
+
+# Next.js
+.next
+
+# Environment variables
+.env*.local
+
+# Misc
+README.md

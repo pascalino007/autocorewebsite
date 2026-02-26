@@ -44,8 +44,8 @@ const url = {
     usedCars: () => '/used-vehicles/cars',
     usedMoto: () => '/used-vehicles/moto',
     brand: (brand: IBrand): IAppLinkHref => ({
-        href: `/supplier/[slug]?slug=${brand.slug}`,
-        as: `/supplier/${brand.slug}`,
+        href: `/car/[brand]?brand=${brand.slug}`,
+        as: `/car/${brand.slug}`,
     }),
     shop: (shop?: IShop | null): IAppLinkHref | string =>
         shop && shop.slug

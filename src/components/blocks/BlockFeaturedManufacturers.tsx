@@ -13,9 +13,9 @@ interface Manufacturer {
 }
 
 const manufacturers: Manufacturer[] = [
-    { name: 'Mitsubishi', image: '/images/avatars/avatar-1.jpg', slug: 'aim-parts' },
-    { name: 'BMW', image: '/images/avatars/avatar-2.jpg', slug: 'wind-engine' },
-    { name: 'Toyota', image: '/images/avatars/avatar-3.jpg', slug: 'turbo-electric' },
+    { name: 'Mitsubishi', image: '/images/car-logo/Mitsubishi-logo.png', slug: 'mitsubishi' },
+    { name: 'BMW', image: '/images/car-logo/bmw.png', slug: 'bmw' },
+    { name: 'Toyota', image: '/images/car-logo/toyota.png', slug: 'toyota' },
     { name: 'Isuzu', image: '/images/avatars/avatar-4.jpg', slug: 'start-one' },
     { name: 'Mercedes', image: '/images/categories/category-4.jpg', slug: 'brandix' },
     { name: 'Subaru', image: '/images/categories/category-5.jpg', slug: 'abs-brand' },
@@ -49,11 +49,12 @@ function BlockFeaturedManufacturers() {
                         return (
                             <AppLink
                                 key={item.name}
+                                //href={url.brand(fakeBrand)}
                                 href={url.brand(fakeBrand)}
                                 className="block-featured-manufacturers__item"
                             >
                                 <div className="block-featured-manufacturers__logo">
-                                    <AppImage className="image__tag" src={item.image} alt={item.name} />
+                                    <AppImage className="image__tag" style={{width: 80 , height: 50}} src={item.image} alt={item.name} />
                                 </div>
                                 <div className="block-featured-manufacturers__name">{item.name}</div>
                             </AppLink>

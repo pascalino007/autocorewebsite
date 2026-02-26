@@ -16,13 +16,13 @@ const promos: Promo[] = [
     {
         title: 'Only this week',
         subtitle: 'Save $20 off full synthetic oil change with coupon',
-        image: '/images/banners/banner1.jpg',
+        image: '',
         cta: 'Shop Now',
     },
     {
         title: 'With big deals',
         subtitle: 'Up to $100 off select brake service packages',
-        image: '/images/banners/banner2.jpg',
+        image: '',
         cta: 'Shop Now',
     },
 ];
