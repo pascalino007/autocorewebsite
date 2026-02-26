@@ -83,7 +83,7 @@
 ## Backend API Analysis
 
 ### Correct Endpoint Structure
-- **Base URL:** `http://localhost:4045/api/v1`
+- **Base URL:** `http://168.231.101.119:4045/api/v1`
 - **Product by Slug:** `GET /api/v1/products/slug/{slug}`
 - **Product by ID:** `GET /api/v1/products/{id}`
 - **Products List:** `GET /api/v1/products`
@@ -188,7 +188,7 @@ return { props: { product } };
 ## Environment Setup
 Create `.env.local` with:
 ```
-NEXT_PUBLIC_API_URL=http://localhost:4045/api/v1
+NEXT_PUBLIC_API_URL=http://168.231.101.119:4045/api/v1
 ```
 
 ## Testing the Fix

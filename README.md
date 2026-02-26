@@ -35,7 +35,7 @@ The project uses environment variables to configure the API endpoint. This is ma
 
 2.  Open `.env.local` and modify the variables as needed for your local setup.
     -   `NEXT_PUBLIC_API_URL`: The base URL for the API.
-        -   For local development, this is typically `http://localhost:4040/api/v1`.
+        -   For local development, this is typically `http://168.231.101.119:4045/api/v1`.
         -   For production, this will be set on your hosting provider to the live API endpoint.
 
 ## Available Scripts
