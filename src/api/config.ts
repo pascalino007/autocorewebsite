@@ -15,10 +15,10 @@ const getApiBase = (): string => {
     if (process.env.NODE_ENV !== 'production') {
         console.warn(
             'Warning: NEXT_PUBLIC_API_URL environment variable is not set. ' +
-            'Falling back to "http://168.231.101.119:4045/api/v1". ' +
+            'Falling back to "http://168.231.101.119:4000/api/v1". ' +
             'Create a .env.local file to override this.'
         );
-        return 'http://168.231.101.119:4045/api/v1';
+        return 'http://168.231.101.119:4000/api/v1';
     }
 
     // In production, we must have the API URL set.
