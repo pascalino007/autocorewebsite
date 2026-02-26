@@ -21,33 +21,38 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build application
-        run: npm run build --if-present
+      # Skipping build step to run in development mode on the server
+      # - name: Build application
+      #   run: npm run build --if-present
 
       - name: Remove node_modules before transfer
         run: rm -rf node_modules
         # We remove node_modules to speed up the transfer. 
         # We will reinstall production deps on the server.
 
+      - name: Compress files
+        run: tar -czf deploy.tar.gz .
+
       - name: Copy files to VPS
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.VPS_PORT }}
-          source: "."
-          target: "/var/www/autocorewebsite"
+          host: 168.231.101.119
+          username: root
+          password: Android@2026
+          source: "deploy.tar.gz"
+          target: "akodessewa/akodessewa-api/"
 
       - name: Install dependencies and restart on VPS
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.VPS_PORT }}
+          host: 168.231.101.119
+          username: root
+          password: Android@2026
           script: |
-            cd /var/www/autocorewebsite
-            npm ci --production
+            cd akodessewa/akodessewa-api/
+            tar -xzf deploy.tar.gz
+            rm deploy.tar.gz
+            # Install all dependencies (including dev) for development mode
+            npm ci
             # Restart via PM2 (ensure PM2 is installed on VPS)
-            pm2 reload autocorewebsite || pm2 start npm --name "autocorewebsite" -- start
+            pm2 reload autocorewebsite || pm2 start npm --name "autocorewebsite" -- run dev
