@@ -52,7 +52,7 @@ export function sanitizeBrand(brand: any): any {
 }
 
 /**
- * Sanitize shop/supplier data so undefined latitude/longitude are null (safe for JSON)
+ * Sanitize shop/supplier data so undefined values are null (safe for JSON)
  */
 export function sanitizeShop(shop: any): any {
     if (!shop) return null;
@@ -63,6 +63,7 @@ export function sanitizeShop(shop: any): any {
         longitude: shop.longitude ?? null,
         city: shop.city ?? null,
         country: shop.country ?? null,
+        rating: shop.rating ?? null,
     };
 }
 
@@ -72,10 +73,15 @@ export function sanitizeShop(shop: any): any {
 export function sanitizeCategory(category: any): any {
     if (!category) return null;
     
+    const rawChildren = category.children;
+    const children = Array.isArray(rawChildren)
+        ? rawChildren.map((child: any) => (child ? sanitizeCategory(child) : null))
+        : null;
+
     return {
         ...category,
         parent: category.parent || null,
-        children: category.children || null,
+        children,
         items: category.items || 0,
         customFields: category.customFields || {},
     };
@@ -105,6 +111,13 @@ export function sanitizeProductForSSP(product: any) {
         reviews: product.reviews ?? 0,
         availability: product.availability ?? null,
     };
+}
+
+/**
+ * Sanitize array of products
+ */
+export function sanitizeProducts(products: any[] = []): any[] {
+    return products.map(product => sanitizeProductForSSP(product));
 }
 
 /**

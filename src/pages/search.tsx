@@ -1,28 +1,24 @@
 // react
 import React, { useEffect, useState } from 'react';
-import { GetServerSideProps, GetServerSidePropsResult } from 'next';
+import { GetServerSideProps, GetServerSidePropsResult, GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/router';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { Store } from 'redux';
 // application
 import getShopPageData from '~/store/shop/shopHelpers';
 import ShopPageShop from '~/components/shop/ShopPageShop';
 import { wrapper } from '~/store/store';
 import { shopApi } from '~/api';
 import { IProduct } from '~/interfaces/product';
-import { sanitizeForSerialization, sanitizeShop, sanitizeCategory } from '~/utils/serialization';
+import { sanitizeForSerialization } from '~/utils/serialization';
+import { IRootState } from '~/store/root/rootTypes';
 
 interface SearchPageProps {
     initialState: any;
     searchQuery: string;
-    initialResults?: {
-        products: IProduct[];
-        total: number;
-        page: number;
-        totalPages: number;
-    };
 }
 
-export const getServerSideProps: GetServerSideProps<SearchPageProps> = wrapper.getServerSideProps((store) => async (context): Promise<GetServerSidePropsResult<SearchPageProps>> => {
+export const getServerSideProps: GetServerSideProps<SearchPageProps> = wrapper.getServerSideProps((store: Store<IRootState>) => async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<SearchPageProps>> => {
     const { query: searchQuery } = context.query as { query: string };
     
     if (!searchQuery) {
@@ -34,67 +30,30 @@ export const getServerSideProps: GetServerSideProps<SearchPageProps> = wrapper.g
     
     const decodedQuery = decodeURIComponent(searchQuery);
     
-    // Initialize shop data
+    // Initialize shop layout data (categories, filters, etc.)
     await getShopPageData(store, context);
-    
-    // Fetch search results
-    let initialResults = null;
-    try {
-        initialResults = await shopApi.getSearchResults(decodedQuery, {
-            page: 1,
-            limit: 20,
-        });
-        // Sanitize results for serialization
-        initialResults = sanitizeForSerialization(initialResults);
-        
-        // If no results found, redirect to 404 page
-        if (!initialResults.products || initialResults.products.length === 0) {
-            return {
-                notFound: true,
-            };
-        }
-    } catch (error) {
-        console.error('Failed to fetch search results:', error);
-        // If search fails, also show 404
-        return {
-            notFound: true,
-        };
-    }
-    
-    // Get state and sanitize it before modifying
-    const state = store.getState();
-    let cleanState = sanitizeForSerialization(state);
-    
-    // Additional sanitization for products list: shop (latitude/longitude) and categories must be JSON-serializable
-    if (cleanState.shop && cleanState.shop.productsList && cleanState.shop.productsList.items) {
-        cleanState.shop.productsList.items = cleanState.shop.productsList.items.map((item: any) => ({
-            ...item,
-            shop: sanitizeShop(item.shop),
-            categories: item.categories ? item.categories.map((cat: any) => sanitizeCategory(cat)) : [],
-        }));
-    }
-    
-    // Set search query in the sanitized state
-    if (cleanState.shop && cleanState.shop.currentFilters) {
-        cleanState.shop.currentFilters = {
-            ...cleanState.shop.currentFilters,
-            search: decodedQuery,
-        };
-    }
 
-    return { 
-        props: { 
+    // Get state and sanitize it for JSON serialization
+    const state = store.getState();
+    const cleanState = sanitizeForSerialization(state);
+
+    return {
+        props: {
             initialState: cleanState,
             searchQuery: decodedQuery,
-            initialResults,
-        } 
+        },
     };
 });
 
-function SearchPage({ searchQuery, initialResults }: SearchPageProps) {
+function SearchPage({ searchQuery }: SearchPageProps) {
     const intl = useIntl();
     const router = useRouter();
-    const [searchResults, setSearchResults] = useState(initialResults);
+    const [searchResults, setSearchResults] = useState<{
+        products: IProduct[];
+        total: number;
+        page: number;
+        totalPages: number;
+    } | null>(null);
     const [loading, setLoading] = useState(false);
 
     const performSearch = async (query: string, page: number = 1) => {
@@ -105,21 +64,22 @@ function SearchPage({ searchQuery, initialResults }: SearchPageProps) {
                 limit: 20,
             });
             
-            // If no results found, redirect to 404
-            if (!results.products || results.products.length === 0) {
-                router.push('/404');
-                return;
-            }
-            
-            setSearchResults(results);
+            // Always set search results, even if empty
+            setSearchResults(results || { products: [], total: 0, page: 1, totalPages: 0 });
         } catch (error) {
             console.error('Search failed:', error);
-            // If search fails, redirect to 404
-            router.push('/404');
+            // If search fails, show empty results instead of redirecting
+            setSearchResults({ products: [], total: 0, page: 1, totalPages: 0 });
         } finally {
             setLoading(false);
         }
     };
+
+    // Perform initial search on mount / when query changes (client-side, using fetch/axios-equivalent)
+    useEffect(() => {
+        if (!searchQuery) return;
+        performSearch(searchQuery, 1);
+    }, [searchQuery]);
 
     return (
         <div className="search-results-page">
@@ -141,6 +101,11 @@ function SearchPage({ searchQuery, initialResults }: SearchPageProps) {
                             />
                         ) : (
                             <FormattedMessage id="TEXT_SEARCH_RESULTS_SUBTITLE" />
+                        )}
+                        {searchResults && searchResults.products.length === 0 && !loading && (
+                            <span className="text-muted ml-2">
+                                <FormattedMessage id="TEXT_NO_RESULTS_FOUND" />
+                            </span>
                         )}
                     </p>
                 </div>

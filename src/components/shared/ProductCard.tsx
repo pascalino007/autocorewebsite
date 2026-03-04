@@ -103,6 +103,7 @@ function ProductCard(props: Props) {
             deliveryCostBase,
         };
     }, [userLocation, product.shop]);
+
     // Store fee in base (USD) currency so the cart & CurrencyFormat work everywhere
     const deliveryFee = (
         product.stock === 'in-stock'
@@ -127,11 +128,15 @@ function ProductCard(props: Props) {
             {/* Image block */}
             <div className="product-card__image">
                 <div className="image image--type--product">
-                    <AppLink href={url.product(product)} className="image__body">
+                    <AppLink href={url.product(product)} className="">
                         {product.images?.[0] ? (
                             <AppImage className="image__tag" src={product.images[0]} />
                         ) : (
-                            <div className="product-card__image-placeholder" />
+                            <AppImage 
+                                className="image__tag" 
+                                src="/images/products/placeholder.svg"
+                                alt={product.name}
+                            />
                         )}
                     </AppLink>
                 </div>
@@ -204,47 +209,63 @@ function ProductCard(props: Props) {
 
             {/* Body */}
             <div className="product-card__info">
-                <h3 className="product-card__name">
+                {/* Reference/SKU - Above Product Name */}
+                {!exclude.includes('meta') && (product.sku || product.partNumber) && (
+                    <div className="product-card__reference">
+                        <span className="product-card__reference-label">Réference:</span>
+                        <span  className="product-card__reference-label">{product.partNumber}</span>
+                        {/* className="product-card__reference-value" */}
+                    </div>
+                )}
+
+                {/* Product Name */}
+                <h3 className="product-card__title">
                     <AppLink href={url.product(product)} className="product-card__name-link">
                         {product.name}
                     </AppLink>
                 </h3>
-
-                {(!exclude.includes('rating') || !exclude.includes('meta')) && (
-                    <div className="product-card__meta-line">
-                        {!exclude.includes('rating') && (
-                            <span className="product-card__rating-inline">
-                                <Rating className="product-card__rating-stars" value={product.rating || 0} />
-                                <span className="product-card__rating-text">
-                                    {product.rating != null ? Number(product.rating).toFixed(1) : '—'}
-                                    {product.reviews != null && product.reviews > 0 && ` (${product.reviews})`}
-                                </span>
+               {/*  {!exclude.includes('rating') && (
+                    <div className="product-card__meta-line" style={{ paddingTop: '-12px' }}>
+                        <span className="product-card__rating-inline">
+                            <Rating className="product-card__rating-stars" value={product.rating || 0} />
+                            <span className="product-card__rating-text">
+                                {product.rating != null ? Number(product.rating).toFixed(1) : '—'}
+                                {product.reviews != null && product.reviews > 0 && ` (${product.reviews})`}
                             </span>
-                        )}
-                        {(product.sku || product.partNumber) && !exclude.includes('meta') && (
-                            <span className="product-card__sku">{product.sku || product.partNumber}</span>
-                        )}
+                        </span>
                     </div>
-                )}
+                )} */}
 
-                {/* Vendor + delivery single row */}
+                {/* Vendor + delivery single row with Avatar */}
                 {(!exclude.includes('supplier') || !exclude.includes('availability')) && (
                     <div className="product-card__vendor-row">
                         {product.shop ? (
-                            <AppLink href={url.shop(product.shop)} className="product-card__vendor-name">
-                                {vendorLine}
+                            <AppLink href={url.shop(product.shop)} className="product-card__supplier">
+                                <div className="product-card__supplier-avatar">
+                                    {product.shop.logo ? (
+                                        <AppImage src={product.shop.logo} alt={product.shop.name} />
+                                    ) : (
+                                        <span className="product-card__supplier-initial">
+                                            {product.shop.name.charAt(0).toUpperCase()}
+                                        </span>
+                                    )}
+                                </div>
+                                <span className="product-card__supplier-name">{vendorLine}</span>
                             </AppLink>
                         ) : (
-                            <span className="product-card__vendor-name product-card__vendor-name--standard">
-                                {vendorLine}
-                            </span>
+                            <div className="product-card__supplier">
+                                <div className="product-card__supplier-avatar product-card__supplier-avatar--default">
+                                    <span className="product-card__supplier-initial">A</span>
+                                </div>
+                                <span className="product-card__supplier-name">{vendorLine}</span>
+                            </div>
                         )}
-                        {hasDeliveryInfo && (
+                       {/*  {hasDeliveryInfo && (
                             <span className="product-card__delivery-fee">
                                 <CurrencyFormat value={deliveryInfo!.deliveryCostBase} />
                             </span>
-                        )}
-                        {product.stock === 'in-stock' && !hasDeliveryInfo && (
+                        )} */}
+                       {/*  {product.stock === 'in-stock' && !hasDeliveryInfo && (
                             <span className="product-card__stock product-card__stock--in">En stock</span>
                         )}
                         {product.stock === 'out-of-stock' && (
@@ -252,7 +273,7 @@ function ProductCard(props: Props) {
                         )}
                         {product.stock === 'on-backorder' && (
                             <span className="product-card__stock product-card__stock--backorder">Sur commande</span>
-                        )}
+                        )} */}
                     </div>
                 )}
 

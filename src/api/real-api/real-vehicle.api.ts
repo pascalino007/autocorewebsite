@@ -9,8 +9,8 @@ export class RealVehicleApi extends VehicleApi {
     }
 
     async getMakes(year?: number): Promise<string[]> {
-        const params = year ? `?year=${year}` : '';
-        const res = await apiRequest(`/cars/makes${params}`);
+        // Backend doesn't filter makes by year, so we ignore the year parameter
+        const res = await apiRequest('/cars/makes');
         return Array.isArray(res) ? res : [];
     }
 

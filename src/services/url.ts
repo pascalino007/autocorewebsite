@@ -40,6 +40,8 @@ const url = {
     }),
     motoHome: () => '/moto',
     motoParts: () => '/moto-parts',
+    camions: () => '/camions',
+    camionsParts: () => '/camions-parts',
     usedVehicles: () => '/used-vehicles',
     usedCars: () => '/used-vehicles/cars',
     usedMoto: () => '/used-vehicles/moto',

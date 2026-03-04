@@ -16,15 +16,19 @@ const manufacturers: Manufacturer[] = [
     { name: 'Mitsubishi', image: '/images/car-logo/Mitsubishi-logo.png', slug: 'mitsubishi' },
     { name: 'BMW', image: '/images/car-logo/bmw.png', slug: 'bmw' },
     { name: 'Toyota', image: '/images/car-logo/toyota.png', slug: 'toyota' },
-    { name: 'Isuzu', image: '/images/avatars/avatar-4.jpg', slug: 'start-one' },
-    { name: 'Mercedes', image: '/images/categories/category-4.jpg', slug: 'brandix' },
-    { name: 'Subaru', image: '/images/categories/category-5.jpg', slug: 'abs-brand' },
-    { name: 'Hyundai', image: '/images/categories/category-6.jpg', slug: 'great-circle' },
-    { name: 'Chevrolet', image: '/images/categories/category-7.jpg', slug: 'just-romb' },
-    { name: 'Ford', image: '/images/banners/banner1.jpg', slug: 'fast-wheels' },
-    { name: 'Mazda', image: '/images/banners/banner2.jpg', slug: 'stroyka-x' },
+    { name: 'Isuzu', image: '/images/car-logo/isuzu.png', slug: 'isuzu' },
+    { name: 'Mercedes', image: '/images/car-logo/mercedes.png', slug: 'brandix' },
+    { name: 'Honda', image: '/images/categories/category-5.jpg', slug: 'abs-brand' },
+    { name: 'Hyundai', image: '/images/car-logo/hyundai.png', slug: 'hyundai' },
+    { name: 'Chevrolet', image: '/images/car-logo/chevrolet.png', slug: 'chevrolet' },
+    { name: 'Ford', image: '/images/car-logo/ford.jpg', slug: 'ford' },
+    { name: 'Mazda', image: '/images/car-logo/mazda.jpg', slug: 'mazda' },
     { name: 'Suzuki', image: '/images/finder.jpg', slug: 'mission-51' },
     { name: 'Peugeot', image: '/images/about.jpg', slug: 'fuel-corp' },
+    { name: 'Audi', image: '/images/about.jpg', slug: 'fuel-corp' },
+    { name: 'Kia', image: '/images/about.jpg', slug: 'fuel-corp' },
+    
+
 ];
 
 function BlockFeaturedManufacturers() {

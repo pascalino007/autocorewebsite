@@ -96,12 +96,12 @@ function BlockFinderMoto() {
 
     return (
         <div className="block block-finder-moto">
-            <Decor className="block-finder-moto__decor" type="bottom" />
+            {/* <Decor className="block-finder-moto__decor" type="bottom" /> */}
             <div
                 className="block-finder-moto__image"
-                style={{ backgroundImage: `url(${baseUrl('/images/finder.jpg')})` }}
+                style={{ backgroundImage: `url(${baseUrl('/images/moto.png')})` }}
             />
-            <div className="block-finder-moto__overlay" />
+            {/* <div className="block-finder-moto__overlay" /> */}
             <div className="block-finder-moto__body container container--max--xl">
                 <div className="block-finder-moto__badge">
                     <i className="fas fa-motorcycle" />

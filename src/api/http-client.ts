@@ -65,8 +65,8 @@ export async function apiRequest<T = any>(
         headers['Authorization'] = `Bearer ${tokens.accessToken}`;
     }
 
-    // Don't set Content-Type for FormData
-    if (options.body instanceof FormData) {
+    // Don't set Content-Type for FormData (only in browser where FormData exists)
+    if (typeof FormData !== 'undefined' && options.body instanceof FormData) {
         delete headers['Content-Type'];
     }
 

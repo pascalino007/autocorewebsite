@@ -1,3 +1,5 @@
+// application
+import { IAddressData } from '~/interfaces/address';
 import { IBrand } from '~/interfaces/brand';
 import { IFilterValues, IListOptions, IReviewsList } from '~/interfaces/list';
 import { IOrder } from '~/interfaces/order';
@@ -201,12 +203,13 @@ export class RealShopApi implements ShopApi {
         }
     }
 
-    async getFeaturedProducts(categorySlug: string | null, limit: number): Promise<IProduct[]> {
+    async getFeaturedProducts(categorySlug: string | null, limit: number, vehicleType?: string): Promise<IProduct[]> {
         const params = new URLSearchParams({ limit: String(limit), isFeatured: 'true' });
         if (categorySlug) {
             const categoryId = await this.getCategoryIdBySlug(categorySlug);
             if (categoryId) params.set('categoryId', categoryId);
         }
+        if (vehicleType) params.set('vehicleType', vehicleType);
         try {
             const res = await publicApiRequest(`/products?${params.toString()}`);
             return (res.data || []).map(mapProduct);
@@ -216,12 +219,13 @@ export class RealShopApi implements ShopApi {
         }
     }
 
-    async getPopularProducts(categorySlug: string | null, limit: number): Promise<IProduct[]> {
+    async getPopularProducts(categorySlug: string | null, limit: number, vehicleType?: string): Promise<IProduct[]> {
         const params = new URLSearchParams({ limit: String(limit), sortBy: 'rating' });
         if (categorySlug) {
             const categoryId = await this.getCategoryIdBySlug(categorySlug);
             if (categoryId) params.set('categoryId', categoryId);
         }
+        if (vehicleType) params.set('vehicleType', vehicleType);
         try {
             const res = await publicApiRequest(`/products?${params.toString()}`);
             return (res.data || []).map(mapProduct);
@@ -231,12 +235,13 @@ export class RealShopApi implements ShopApi {
         }
     }
 
-    async getTopRatedProducts(categorySlug: string | null, limit: number): Promise<IProduct[]> {
+    async getTopRatedProducts(categorySlug: string | null, limit: number, vehicleType?: string): Promise<IProduct[]> {
         const params = new URLSearchParams({ limit: String(limit), sortBy: 'rating' });
         if (categorySlug) {
             const categoryId = await this.getCategoryIdBySlug(categorySlug);
             if (categoryId) params.set('categoryId', categoryId);
         }
+        if (vehicleType) params.set('vehicleType', vehicleType);
         try {
             const res = await publicApiRequest(`/products?${params.toString()}`);
             return (res.data || []).map(mapProduct);
@@ -246,16 +251,20 @@ export class RealShopApi implements ShopApi {
         }
     }
 
-    async getSpecialOffers(limit: number): Promise<IProduct[]> {
+    async getSpecialOffers(limit: number, vehicleType?: string): Promise<IProduct[]> {
         // Get products with comparePrice higher than price (indicating they're on sale)
-        const res = await publicApiRequest(`/products?limit=${limit}&sortBy=popular`);
+        const params = new URLSearchParams({ limit: String(limit), sortBy: 'popular' });
+        if (vehicleType) params.set('vehicleType', vehicleType);
+        const res = await publicApiRequest(`/products?${params.toString()}`);
         const products = (res.data || []).map(mapProduct);
         // Filter to only show products actually on sale
         return products.filter((p: IProduct) => p.compareAtPrice && p.compareAtPrice > p.price);
     }
 
-    async getLatestProducts(limit: number): Promise<IProduct[]> {
-        const res = await publicApiRequest(`/products?limit=${limit}&sortBy=newest`);
+    async getLatestProducts(limit: number, vehicleType?: string): Promise<IProduct[]> {
+        const params = new URLSearchParams({ limit: String(limit), sortBy: 'newest' });
+        if (vehicleType) params.set('vehicleType', vehicleType);
+        const res = await publicApiRequest(`/products?${params.toString()}`);
         return (res.data || []).map(mapProduct);
     }
 
@@ -353,9 +362,9 @@ function mapCategory(c: any): IShopCategory {
         image: c.image || null,
         items: c._count?.products || c.productCount || 0,
         parent: c.parent ? mapCategory(c.parent) : null,
-        children: c.children ? c.children.map(mapCategory) : undefined,
-        layout: c.children?.length > 0 ? 'categories' : 'products',
-        customFields: {},
+        children: c.children && c.children.length > 0 ? c.children.map(mapCategory) : null,
+        layout: c.children && c.children.length > 0 ? 'categories' : 'products',
+        customFields: c.customFields || {},
     };
 }
 
@@ -368,14 +377,14 @@ function mapShop(s: any): IShop {
         name: s.name || '',
         image: s.logo || s.image || '',
         country: s.country || '',
-        latitude: lat != null ? Number(lat) : undefined,
-        longitude: lng != null ? Number(lng) : undefined,
-        city: s.city || '',
+        latitude: lat != null ? Number(lat) : null,
+        longitude: lng != null ? Number(lng) : null,
+        city: s.city || null,
         address: s.address || '',
         phone: s.phone || '',
         email: s.email || '',
         whatsapp: s.whatsapp || '',
-        rating: s.rating ? Number(s.rating) : undefined,
+        rating: s.rating ? Number(s.rating) : null,
         reviewCount: s.reviewCount || s._count?.reviews || 0,
     };
 }
@@ -386,10 +395,10 @@ function mapBrand(b: any): IBrand {
         slug: b.slug || '',
         name: b.name || '',
         image: b.logo || b.image || '',
-        country: b.country || '',
-        latitude: b.latitude ? Number(b.latitude) : undefined,
-        longitude: b.longitude ? Number(b.longitude) : undefined,
-        shopId: b.shopId ? Number(b.shopId) : undefined,
+        country: b.country || null,
+        latitude: b.latitude ? Number(b.latitude) : null,
+        longitude: b.longitude ? Number(b.longitude) : null,
+        shopId: b.shopId ? Number(b.shopId) : null,
     };
 }
 
@@ -397,6 +406,11 @@ function mapProduct(p: any): IProduct {
     const images = (p.images || []).map((img: any) =>
         typeof img === 'string' ? img : img.url || ''
     );
+
+    // Ensure at least one image, add default if none exist
+    if (images.length === 0) {
+        images.push('/images/products/placeholder.svg');
+    }
 
     let stockStatus: 'in-stock' | 'out-of-stock' | 'on-backorder' = 'in-stock';
     if (p.stock === 0 || p.stock === 'out-of-stock') stockStatus = 'out-of-stock';
@@ -429,10 +443,10 @@ function mapProduct(p: any): IProduct {
         compatibility,
         brand: p.brand ? mapBrand(p.brand) : null,
         shop: p.shop ? mapShop(p.shop) : null,
-        tags: p.tags || [],
+        tags: p.tags || [], // Add tags from backend
         type: {
-            name: p.vehicleType === 'MOTO' ? 'Moto Parts' : 'Auto Parts',
-            slug: p.vehicleType === 'MOTO' ? 'moto-parts' : 'auto-parts',
+            name: p.vehicleType === 'MOTO' ? 'Moto Parts' : p.vehicleType === 'TRUCK' ? 'Truck Parts' : 'Auto Parts',
+            slug: p.vehicleType === 'MOTO' ? 'moto-parts' : p.vehicleType === 'TRUCK' ? 'truck-parts' : 'auto-parts',
             attributeGroups: [],
         },
         categories: p.categories ? p.categories.map(mapCategory) : (p.category ? [mapCategory(p.category)] : []),

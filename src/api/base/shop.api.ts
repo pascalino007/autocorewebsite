@@ -77,15 +77,15 @@ export abstract class ShopApi {
 
     abstract getRelatedProducts(productId: number, limit: number): Promise<IProduct[]>;
 
-    abstract getFeaturedProducts(categorySlug: string | null, limit: number): Promise<IProduct[]>;
+    abstract getFeaturedProducts(categorySlug: string | null, limit: number, vehicleType?: string): Promise<IProduct[]>;
 
-    abstract getPopularProducts(categorySlug: string | null, limit: number): Promise<IProduct[]>;
+    abstract getPopularProducts(categorySlug: string | null, limit: number, vehicleType?: string): Promise<IProduct[]>;
 
-    abstract getTopRatedProducts(categorySlug: string | null, limit: number): Promise<IProduct[]>;
+    abstract getTopRatedProducts(categorySlug: string | null, limit: number, vehicleType?: string): Promise<IProduct[]>;
 
-    abstract getSpecialOffers(limit: number): Promise<IProduct[]>;
+    abstract getSpecialOffers(limit: number, vehicleType?: string): Promise<IProduct[]>;
 
-    abstract getLatestProducts(limit: number): Promise<IProduct[]>;
+    abstract getLatestProducts(limit: number, vehicleType?: string): Promise<IProduct[]>;
 
     abstract getSearchSuggestions(
         query: string,

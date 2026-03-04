@@ -15,12 +15,14 @@ function VehicleTypeModal(props: Props) {
     const { isOpen, onClose } = props;
     const router = useRouter();
 
-    const handleSelect = (type: 'car' | 'moto') => {
+    const handleSelect = (type: 'car' | 'moto' | 'camions') => {
         onClose();
         if (type === 'car') {
             router.push('/');
-        } else {
+        } else if (type === 'moto') {
             router.push('/moto');
+        } else {
+            router.push('/camions');
         }
     };
 
@@ -86,6 +88,31 @@ function VehicleTypeModal(props: Props) {
                         <div className="vtm__card-label">Moto</div>
                         <div className="vtm__card-desc">
                             Motos, scooters, quads
+                        </div>
+                        <div className="vtm__card-cta">
+                            Explorer
+                            <i className="fas fa-arrow-right" />
+                        </div>
+                    </button>
+
+                    <div className="vtm__divider">
+                        <span>ou</span>
+                    </div>
+
+                    <button
+                        type="button"
+                        className="vtm__card vtm__card--camions"
+                        onClick={() => handleSelect('camions')}
+                    >
+                        <div className="vtm__card-visual">
+                            <div className="vtm__card-glow" />
+                            <div className="vtm__card-icon-wrap">
+                                <i className="fas fa-truck" />
+                            </div>
+                        </div>
+                        <div className="vtm__card-label">Camions</div>
+                        <div className="vtm__card-desc">
+                            Poids lourd, camions, bus
                         </div>
                         <div className="vtm__card-cta">
                             Explorer

@@ -59,13 +59,25 @@ export function useDeferredData<T>(
             return curState;
         });
 
-        memoizedSource().then((data) => {
-            if (canceled) {
-                return;
-            }
+        memoizedSource()
+            .then((data) => {
+                if (canceled) {
+                    return;
+                }
 
-            setState(() => ({ isLoading: false, data }));
-        });
+                setState(() => ({ isLoading: false, data }));
+            })
+            .catch((error) => {
+                if (canceled) {
+                    return;
+                }
+
+                // On error, stop loading and fall back to default data
+                // so UI sections don't spin forever.
+                // eslint-disable-next-line no-console
+                console.error('Deferred data load failed:', error);
+                setState(() => ({ isLoading: false, data: defaultData }));
+            });
 
         return () => {
             canceled = true;

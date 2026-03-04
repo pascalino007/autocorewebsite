@@ -27,11 +27,12 @@ interface Props {
     sidebarPosition?: IShopCategoryPageSidebarPosition;
     category?: IShopCategory | null;
     subcategories?: IShopCategory[];
+    vehicleType?: string;
 }
 
 function ShopPageCategory(props: Props) {
     const intl = useIntl();
-    const { layout, sidebarPosition = 'start', category } = props;
+    const { layout, sidebarPosition = 'start', category, vehicleType } = props;
     let { subcategories } = props;
     const hasSidebar = layout.endsWith('-sidebar');
     const [brands, setBrands] = useState<IBrand[]>([]);
@@ -44,11 +45,11 @@ function ShopPageCategory(props: Props) {
     subcategories = subcategories || [];
 
     const bestsellers = useDeferredData(() => (
-        shopApi.getPopularProducts(null, 8)
+        shopApi.getPopularProducts(null, 8, vehicleType)
     ), []);
 
     const featured = useDeferredData(() => (
-        shopApi.getFeaturedProducts(null, 8)
+        shopApi.getFeaturedProducts(null, 8, vehicleType)
     ), []);
 
     useEffect(() => {

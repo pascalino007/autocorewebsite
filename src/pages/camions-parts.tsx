@@ -13,7 +13,16 @@ interface Props {
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
-    const category = await shopApi.getCategoryBySlug('moto-parts', { depth: 2 });
+    let category: IShopCategory | null = null;
+    try {
+        category = await shopApi.getCategoryBySlug('camions-parts', { depth: 2 });
+    } catch {
+        try {
+            category = await shopApi.getCategoryBySlug('pieces-poids-lourd', { depth: 2 });
+        } catch {
+            // no category yet in backend
+        }
+    }
 
     return {
         props: {
@@ -33,7 +42,7 @@ function Page(props: Props) {
         <ShopPageCategory
             layout="columns-4-sidebar"
             category={category}
-            vehicleType="MOTO"
+            vehicleType="TRUCK"
         />
     );
 }

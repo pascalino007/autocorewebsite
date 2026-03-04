@@ -49,7 +49,7 @@ function SellerModal(props: Props) {
                     </a>
 
                     <a
-                        href="/account/login"
+                        href="https://suplier.aakodessewa.com/login"
                         className="seller-modal__option seller-modal__option--register"
                         onClick={onClose}
                     >

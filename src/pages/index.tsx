@@ -34,20 +34,20 @@ function Page() {
      */
     const featuredProducts = useProductTabs(
         useMemo(() => [
-            { id: 1, name: 'All', categorySlug: null },
-            { id: 2, name: 'Engine Parts', categorySlug: 'engine-parts', fallbacks: getCategoryFallbacks('engine-parts') },
-            { id: 3, name: 'Brakes & Suspension', categorySlug: 'brakes-suspension', fallbacks: getCategoryFallbacks('brakes-suspension') },
-            { id: 4, name: 'Electrical', categorySlug: 'electrical', fallbacks: getCategoryFallbacks('electrical') },
+            { id: 1, name: 'All', categorySlug: null, vehicleType: 'AUTO' },
+            { id: 2, name: 'Engine Parts', categorySlug: 'engine-parts', fallbacks: getCategoryFallbacks('engine-parts'), vehicleType: 'AUTO' },
+            { id: 3, name: 'Brakes & Suspension', categorySlug: 'brakes-suspension', fallbacks: getCategoryFallbacks('brakes-suspension'), vehicleType: 'AUTO' },
+            { id: 4, name: 'Electrical', categorySlug: 'electrical', fallbacks: getCategoryFallbacks('electrical'), vehicleType: 'AUTO' },
         ], []),
         async (tab) => {
             try {
-                return await shopApi.getFeaturedProducts(tab.categorySlug, 8);
+                return await shopApi.getFeaturedProducts(tab.categorySlug, 8, tab.vehicleType);
             } catch (error) {
                 // Try fallback categories if primary fails
                 if (tab.fallbacks && tab.fallbacks.length > 0) {
                     for (const fallbackSlug of tab.fallbacks) {
                         try {
-                            return await shopApi.getFeaturedProducts(fallbackSlug, 8);
+                            return await shopApi.getFeaturedProducts(fallbackSlug, 8, tab.vehicleType);
                         } catch (fallbackError) {
                             console.warn(`Fallback category ${fallbackSlug} also failed:`, fallbackError);
                             continue;
@@ -63,7 +63,7 @@ function Page() {
 
     const blockSale = useDeferredData(async () => {
         try {
-            return await shopApi.getSpecialOffers(8);
+            return await shopApi.getSpecialOffers(8, 'AUTO');
         } catch (error) {
             console.warn('Failed to fetch special offers:', error);
             return [];
@@ -90,7 +90,7 @@ function Page() {
 
     const newArrivals = useDeferredData(async () => {
         try {
-            return await shopApi.getLatestProducts(12);
+            return await shopApi.getLatestProducts(12, 'AUTO');
         } catch (error) {
             console.warn('Failed to fetch latest products:', error);
             return [];
@@ -135,7 +135,7 @@ function Page() {
                 title: 'Top Rated Products',
                 source: async () => {
                     try {
-                        return await shopApi.getTopRatedProducts(null, 3);
+                        return await shopApi.getTopRatedProducts(null, 3, 'AUTO');
                     } catch (error) {
                         console.warn('Failed to fetch top rated products:', error);
                         return [];
@@ -146,7 +146,7 @@ function Page() {
                 title: 'Special Offers',
                 source: async () => {
                     try {
-                        return await shopApi.getSpecialOffers(3);
+                        return await shopApi.getSpecialOffers(3, 'AUTO');
                     } catch (error) {
                         console.warn('Failed to fetch special offers for columns:', error);
                         return [];
@@ -157,7 +157,7 @@ function Page() {
                 title: 'Bestsellers',
                 source: async () => {
                     try {
-                        return await shopApi.getPopularProducts(null, 3);
+                        return await shopApi.getPopularProducts(null, 3, 'AUTO');
                     } catch (error) {
                         console.warn('Failed to fetch popular products for columns:', error);
                         return [];
@@ -254,6 +254,7 @@ function Page() {
             <BlockSpace layout="divider-nl" className="d-xl-block d-none" />
             <BlockProductsColumns columns={columns} />
             <BlockSpace layout="before-footer" />
+            
         </React.Fragment>
     );
 }

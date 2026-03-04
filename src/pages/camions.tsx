@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import BlockBanners from '~/components/blocks/BlockBanners';
 import BlockBrands from '~/components/blocks/BlockBrands';
 import BlockFeatures from '~/components/blocks/BlockFeatures';
-import BlockFinderMoto from '~/components/blocks/BlockFinderMoto';
+import BlockFinderTruck from '~/components/blocks/BlockFinderTruck';
 import BlockProductsCarousel from '~/components/blocks/BlockProductsCarousel';
 import BlockProductsColumns from '~/components/blocks/BlockProductsColumns';
 import BlockSale from '~/components/blocks/BlockSale';
@@ -12,73 +12,76 @@ import BlockSpace from '~/components/blocks/BlockSpace';
 import ProductCard from '~/components/shared/ProductCard';
 import { shopApi } from '~/api';
 import { useDeferredData, useProductColumns } from '~/services/hooks';
+import url from '~/services/url';
 
-function MotoPage() {
-    // Use featured moto products instead of strict "special offers" filter,
-    // to ensure we always have items to display.
+// Camions page uses TRUCK vehicle type for proper filtering
+function CamionsPage() {
     const promoProducts = useDeferredData(
-        () => shopApi.getProductsList({ limit: 4 }, { isFeatured: 'true', vehicleType: 'MOTO' }).then((r) => r.items),
+        () => shopApi.getProductsList({ limit: 4 }, { isFeatured: 'true', vehicleType: 'TRUCK' }).then((r) => r.items),
         [],
     );
-    const topRated = useDeferredData(() => shopApi.getTopRatedProducts(null, 8, 'MOTO'), []);
+    const topRated = useDeferredData(() => shopApi.getTopRatedProducts(null, 8, 'TRUCK'), []);
     const blockSale = useDeferredData(
-        () => shopApi.getProductsList({ limit: 8 }, { isFeatured: 'true', vehicleType: 'MOTO' }).then((r) => r.items),
+        () => shopApi.getProductsList({ limit: 8 }, { isFeatured: 'true', vehicleType: 'TRUCK' }).then((r) => r.items),
         [],
     );
     const brands = useDeferredData(() => shopApi.getBrands({ limit: 16 }), []);
 
-    // Themed moto product sections
+    // Themed product sections: oils, filters, engines, tires, brakes, batteries
     const oils = useDeferredData(
-        () => shopApi.getProductsList({ limit: 8 }, { search: 'huile', vehicleType: 'MOTO' }),
+        () => shopApi.getProductsList({ limit: 8 }, { search: 'huile', vehicleType: 'TRUCK' }),
+        [],
+    );
+    const filters = useDeferredData(
+        () => shopApi.getProductsList({ limit: 8 }, { search: 'filtre', vehicleType: 'TRUCK' }),
+        [],
+    );
+    const engines = useDeferredData(
+        () => shopApi.getProductsList({ limit: 8 }, { search: 'moteur', vehicleType: 'TRUCK' }),
         [],
     );
     const tires = useDeferredData(
-        () => shopApi.getProductsList({ limit: 8 }, { search: 'pneu', vehicleType: 'MOTO' }),
+        () => shopApi.getProductsList({ limit: 8 }, { search: 'pneu', vehicleType: 'TRUCK' }),
         [],
     );
-    const mirrors = useDeferredData(
-        () => shopApi.getProductsList({ limit: 8 }, { search: 'retro', vehicleType: 'MOTO' }),
+    const brakes = useDeferredData(
+        () => shopApi.getProductsList({ limit: 8 }, { search: 'frein', vehicleType: 'TRUCK' }),
         [],
     );
-    const accessories = useDeferredData(
-        () => shopApi.getProductsList({ limit: 8 }, { search: 'accessoire', vehicleType: 'MOTO' }),
-        [],
-    );
-    const decoration = useDeferredData(
-        () => shopApi.getProductsList({ limit: 8 }, { search: 'deco', vehicleType: 'MOTO' }),
+    const batteries = useDeferredData(
+        () => shopApi.getProductsList({ limit: 8 }, { search: 'batterie', vehicleType: 'TRUCK' }),
         [],
     );
 
     const columns = useProductColumns(
         useMemo(() => [
             {
-                title: 'Meilleures Ventes Moto',
-                source: () => shopApi.getPopularProducts(null, 3, 'MOTO'),
+                title: 'Meilleures Ventes Camions',
+                source: () => shopApi.getPopularProducts(null, 3, 'TRUCK'),
             },
             {
                 title: 'Offres Spéciales',
-                source: () => shopApi.getSpecialOffers(3, 'MOTO'),
+                source: () => shopApi.getSpecialOffers(3, 'TRUCK'),
             },
             {
                 title: 'Les Mieux Notés',
-                source: () => shopApi.getTopRatedProducts(null, 3, 'MOTO'),
+                source: () => shopApi.getTopRatedProducts(null, 3, 'TRUCK'),
             },
         ], []),
     );
 
     return (
         <React.Fragment>
-            {/* 1. Hero finder for moto */}
-            <BlockFinderMoto />
+            <BlockFinderTruck />
             <BlockFeatures layout="top-strip" />
             <BlockSpace layout="divider-nl" />
 
-            {/* 2. Compact promo strip for highlighted moto deals */}
+            {/* Promo strip */}
             <div className="moto-mini-promo">
                 <div className="container">
                     <div className="moto-mini-promo__head">
-                        <h2 className="moto-mini-promo__title">Promotions Spéciales</h2>
-                        <span className="moto-mini-promo__subtitle">Offres limitées sur les pièces moto</span>
+                        <h2 className="moto-mini-promo__title">Promotions Poids Lourd</h2>
+                        <span className="moto-mini-promo__subtitle">Offres sur pièces camions &amp; bus</span>
                     </div>
                     <div className="moto-mini-promo__grid">
                         {promoProducts.data.slice(0, 4).map((product) => (
@@ -96,38 +99,38 @@ function MotoPage() {
 
             <BlockSpace layout="divider-nl" />
 
-            {/* 3. Moto-focused feature grid (service guarantees, delivery, support) */}
+            {/* Feature grid */}
             <section className="moto-feature-grid">
                 <div className="container">
                     <div className="moto-feature-grid__head">
-                        <h2 className="moto-feature-grid__title">Pourquoi acheter vos pièces moto sur Akodessewa ?</h2>
+                        <h2 className="moto-feature-grid__title">Pourquoi acheter vos pièces camions sur Akodessewa ?</h2>
                         <p className="moto-feature-grid__subtitle">
-                            Une sélection de pièces fiables, livrées rapidement, avec le support de spécialistes moto.
+                            Pièces poids lourd, livraison dédiée et support professionnel pour flottes et transporteurs.
                         </p>
                     </div>
                     <div className="moto-feature-grid__items">
                         <div className="moto-feature-grid__item">
-                            <h3 className="moto-feature-grid__item-title">Spécialistes Moto</h3>
+                            <h3 className="moto-feature-grid__item-title">Spécialistes Poids Lourd</h3>
                             <p className="moto-feature-grid__item-text">
-                                Catalogue dédié aux deux‑roues, avec des pièces adaptées au climat et aux routes locales.
+                                Catalogue adapté aux camions, bus et véhicules industriels avec pièces d&apos;origine et équivalents.
                             </p>
                         </div>
                         <div className="moto-feature-grid__item">
-                            <h3 className="moto-feature-grid__item-title">Livraison Rapide</h3>
+                            <h3 className="moto-feature-grid__item-title">Livraison Flotte</h3>
                             <p className="moto-feature-grid__item-text">
-                                Partenaires logistiques optimisés pour livrer vos pièces moto en un temps record.
+                                Solutions logistiques pour professionnels : commandes groupées, livraison sur site ou atelier.
                             </p>
                         </div>
                         <div className="moto-feature-grid__item">
-                            <h3 className="moto-feature-grid__item-title">Support Atelier</h3>
+                            <h3 className="moto-feature-grid__item-title">Support Pro</h3>
                             <p className="moto-feature-grid__item-text">
-                                Besoin d&apos;aide pour le montage ? Nous vous mettons en relation avec des garages partenaires.
+                                Équipe dédiée pour les achats B2B et la mise en relation avec des ateliers agréés.
                             </p>
                         </div>
                         <div className="moto-feature-grid__item">
-                            <h3 className="moto-feature-grid__item-title">Pièces d&apos;Origine &amp; Équivalents</h3>
+                            <h3 className="moto-feature-grid__item-title">Qualité &amp; Garantie</h3>
                             <p className="moto-feature-grid__item-text">
-                                Comparez pièces d&apos;origine et alternatives pour trouver le meilleur rapport qualité/prix.
+                                Pièces certifiées pour une utilisation intensive et une traçabilité complète.
                             </p>
                         </div>
                     </div>
@@ -145,9 +148,9 @@ function MotoPage() {
 
             <BlockSpace layout="divider-nl" />
 
-            {/* Themed product rows with ad spaces between each */}
+            {/* Huiles & Lubrifiants */}
             <BlockProductsCarousel
-                blockTitle="Huiles &amp; Lubrifiants Moto"
+                blockTitle="Huiles &amp; Lubrifiants Poids Lourd"
                 layout="grid-4"
                 loading={oils.isLoading}
                 products={oils.data?.items || []}
@@ -157,102 +160,125 @@ function MotoPage() {
                 <div className="container moto-inline-ad__container">
                     <div className="moto-inline-ad__label">Espace Publicitaire</div>
                     <div className="moto-inline-ad__content">
-                        <span className="moto-inline-ad__title">Visibilité maximale auprès des motards</span>
+                        <span className="moto-inline-ad__title">Visibilité auprès des transporteurs et flottes</span>
                         <span className="moto-inline-ad__text">
-                            Placez ici vos offres de services, stations ou boutiques spécialisées moto.
+                            Placez ici vos offres de lubrifiants, fluides ou services pour poids lourd.
                         </span>
                     </div>
                 </div>
             </section>
 
+            {/* Filtres */}
             <BlockProductsCarousel
-                blockTitle="Pneus &amp; Kits Roues"
+                blockTitle="Filtres (Air, Huile, Carburant)"
                 layout="grid-4"
-                loading={tires.isLoading}
-                products={tires.data?.items || []}
+                loading={filters.isLoading}
+                products={filters.data?.items || []}
             />
 
             <section className="moto-inline-ad moto-inline-ad--dark">
                 <div className="container moto-inline-ad__container">
-                    <div className="moto-inline-ad__label">Espace Pub Pneus</div>
+                    <div className="moto-inline-ad__label">Espace Pub Filtres</div>
                     <div className="moto-inline-ad__content">
-                        <span className="moto-inline-ad__title">Mettez en avant vos marques de pneus moto</span>
+                        <span className="moto-inline-ad__title">Marques de filtres pour camions et bus</span>
                         <span className="moto-inline-ad__text">
-                            Idéal pour les distributeurs et importateurs de pneus deux‑roues.
+                            Idéal pour fabricants et distributeurs de filtres industriels.
                         </span>
                     </div>
                 </div>
             </section>
 
+            {/* Moteurs */}
             <BlockProductsCarousel
-                blockTitle="Rétroviseurs &amp; Pièces de Carrosserie"
+                blockTitle="Moteurs &amp; Pièces Moteur"
                 layout="grid-4"
-                loading={mirrors.isLoading}
-                products={mirrors.data?.items || []}
+                loading={engines.isLoading}
+                products={engines.data?.items || []}
             />
 
             <section className="moto-inline-ad">
                 <div className="container moto-inline-ad__container">
                     <div className="moto-inline-ad__label">Espace Pub Atelier</div>
                     <div className="moto-inline-ad__content">
-                        <span className="moto-inline-ad__title">Présentez vos services de montage et réparation</span>
+                        <span className="moto-inline-ad__title">Ateliers poids lourd : faites-vous connaître</span>
                         <span className="moto-inline-ad__text">
-                            Un emplacement premium pour les ateliers spécialisés moto.
+                            Un emplacement premium pour les réparateurs et mainteneurs de flottes.
                         </span>
                     </div>
                 </div>
             </section>
 
+            {/* Pneus */}
             <BlockProductsCarousel
-                blockTitle="Accessoires Moto"
+                blockTitle="Pneus &amp; Roues"
                 layout="grid-4"
-                loading={accessories.isLoading}
-                products={accessories.data?.items || []}
+                loading={tires.isLoading}
+                products={tires.data?.items || []}
             />
 
             <section className="moto-inline-ad moto-inline-ad--accent">
                 <div className="container moto-inline-ad__container">
-                    <div className="moto-inline-ad__label">Espace Pub Accessoires</div>
+                    <div className="moto-inline-ad__label">Espace Pub Pneus</div>
                     <div className="moto-inline-ad__content">
-                        <span className="moto-inline-ad__title">Casques, gants, protections, équipements</span>
+                        <span className="moto-inline-ad__title">Pneus camion, bus et véhicules industriels</span>
                         <span className="moto-inline-ad__text">
-                            Un emplacement dédié aux marques d&apos;équipements et accessoires moto.
+                            Mettez en avant vos gammes poids lourd auprès des transporteurs.
                         </span>
                     </div>
                 </div>
             </section>
 
+            {/* Freins */}
             <BlockProductsCarousel
-                blockTitle="Décoration &amp; Personnalisation"
+                blockTitle="Freins &amp; Plaquettes"
                 layout="grid-4"
-                loading={decoration.isLoading}
-                products={decoration.data?.items || []}
+                loading={brakes.isLoading}
+                products={brakes.data?.items || []}
+            />
+
+            <section className="moto-inline-ad">
+                <div className="container moto-inline-ad__container">
+                    <div className="moto-inline-ad__label">Espace Pub Freinage</div>
+                    <div className="moto-inline-ad__content">
+                        <span className="moto-inline-ad__title">Systèmes de freinage pour poids lourd</span>
+                        <span className="moto-inline-ad__text">
+                            Fabricants et distributeurs de pièces freinage professionnel.
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            {/* Batteries & Électricité */}
+            <BlockProductsCarousel
+                blockTitle="Électricité &amp; Batteries"
+                layout="grid-4"
+                loading={batteries.isLoading}
+                products={batteries.data?.items || []}
             />
 
             <BlockSpace layout="divider-nl" />
 
-            {/* 4. Hero ad banner for moto campaigns */}
+            {/* Hero ad banner */}
             <section className="moto-hero-ad">
                 <div className="container moto-hero-ad__container">
                     <div className="moto-hero-ad__content">
-                        <h2 className="moto-hero-ad__title">Préparez votre moto pour la saison</h2>
+                        <h2 className="moto-hero-ad__title">Entretien et pièces pour votre flotte</h2>
                         <p className="moto-hero-ad__text">
-                            Profitez de remises sur les kits d&apos;entretien, plaquettes de frein, pneus et huiles moteur.
+                            Huiles moteur, filtres, plaquettes de frein, pneus et pièces d&apos;usure pour camions et bus.
                         </p>
                         <ul className="moto-hero-ad__list">
-                            <li>Kits vidange complets</li>
-                            <li>Pneus route &amp; tout‑terrain</li>
-                            <li>Éclairage et accessoires sécurité</li>
+                            <li>Vidanges et kits entretien</li>
+                            <li>Pneus toutes positions</li>
+                            <li>Freinage &amp; suspension</li>
                         </ul>
-                        <a href="/moto-parts" className="btn btn-primary moto-hero-ad__btn">
-                            Découvrir les offres moto
+                        <a href={url.camionsParts()} className="btn btn-primary moto-hero-ad__btn">
+                            Voir le catalogue poids lourd
                         </a>
                     </div>
                     <div className="moto-hero-ad__visual">
                         <div className="moto-hero-ad__tag">Espace Pub</div>
                         <div className="moto-hero-ad__placeholder">
-                            {/* Placeholder for moto visual / future campaign image */}
-                            Visuel campagne moto
+                            Visuel campagne camions
                         </div>
                     </div>
                 </div>
@@ -260,28 +286,28 @@ function MotoPage() {
 
             <BlockSpace layout="divider-nl" />
 
-            {/* 5. Dual ad tiles for garages & assurances */}
+            {/* Partner ad tiles */}
             <section className="moto-partner-ads">
                 <div className="container">
                     <div className="moto-partner-ads__grid">
                         <div className="moto-partner-ads__card moto-partner-ads__card--garage">
-                            <div className="moto-partner-ads__label">Espace Pub Garage</div>
-                            <h3 className="moto-partner-ads__title">Vous gérez un garage moto ?</h3>
+                            <div className="moto-partner-ads__label">Espace Pub Atelier</div>
+                            <h3 className="moto-partner-ads__title">Vous réparez des camions ou bus ?</h3>
                             <p className="moto-partner-ads__text">
-                                Mettez vos services en avant auprès de milliers de motards qui achètent leurs pièces sur Akodessewa.
+                                Référencez votre atelier auprès des transporteurs qui achètent leurs pièces sur Akodessewa.
                             </p>
-                            <a href="/contact" className="btn btn-light moto-partner-ads__btn">
+                            <a href={url.pageContactUs()} className="btn btn-light moto-partner-ads__btn">
                                 Devenir partenaire
                             </a>
                         </div>
                         <div className="moto-partner-ads__card moto-partner-ads__card--insurance">
-                            <div className="moto-partner-ads__label">Espace Pub Assurance</div>
-                            <h3 className="moto-partner-ads__title">Offres assurance deux‑roues</h3>
+                            <div className="moto-partner-ads__label">Espace Pub Assurance / Flotte</div>
+                            <h3 className="moto-partner-ads__title">Assurance flotte &amp; poids lourd</h3>
                             <p className="moto-partner-ads__text">
-                                Créez un espace dédié à vos offres d&apos;assurance moto directement sur la page la plus visitée par les motards.
+                                Proposez vos offres d&apos;assurance camion et flotte sur la page dédiée aux professionnels.
                             </p>
-                            <a href="/contact" className="btn btn-outline-light moto-partner-ads__btn">
-                                Parler à un conseiller
+                            <a href={url.pageContactUs()} className="btn btn-outline-light moto-partner-ads__btn">
+                                Nous contacter
                             </a>
                         </div>
                     </div>
@@ -290,7 +316,6 @@ function MotoPage() {
 
             <BlockSpace layout="divider-nl" />
 
-            {/* Existing sale block kept, placed after new ad zones */}
             <BlockSale products={blockSale.data} loading={blockSale.isLoading} />
 
             <BlockSpace layout="divider-nl" />
@@ -304,4 +329,4 @@ function MotoPage() {
     );
 }
 
-export default MotoPage;
+export default CamionsPage;
